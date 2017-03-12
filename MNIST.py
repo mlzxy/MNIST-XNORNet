@@ -1,7 +1,5 @@
 import tensorflow as tf
 import numpy as np
-import matplotlib.pyplot as plt
-get_ipython().magic(u'matplotlib inline')
 
 from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
@@ -32,7 +30,7 @@ keep_prob = tf.placeholder(tf.float32)
 x_image = tf.reshape(x, [-1,28,28,1])
 
 # First Conv Layer
-W_conv1 = weight_variable(=[5, 5, 1, 32])
+W_conv1 = weight_variable([5, 5, 1, 32])
 b_conv1 = bias_variable([32])
 
 h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)
