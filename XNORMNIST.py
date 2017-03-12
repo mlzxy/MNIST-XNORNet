@@ -42,36 +42,44 @@ W_conv1 = weight_variable([5, 5, 1, 32])
 b_conv1 = bias_variable([32])
 BW_conv1 = binarize_weights(W_conv1)
 
-h_conv1 = tf.nn.relu(conv2d(x_image, BW_conv1) + b_conv1)
+norm1 = batch_norm_layer(x_image)
+binAct1 = binary_activation(norm1)
+
+h_conv1 = tf.nn.relu(conv2d(binAct1, BW_conv1) + b_conv1)
 h_pool1 = max_pool_2x2(h_conv1)
 
 # Second convolutional layer
 W_conv2 = weight_variable([5, 5, 32, 64])
 b_conv2 = bias_variable([64])
-BW_conv1 = binarize_weights(W_conv1)
+BW_conv2 = binarize_weights(W_conv2)
 
 norm2 = batch_norm_layer(h_pool1)
 binAct2 = binary_activation(norm2)
 
-h_conv2 = conv2d(binAct2, W_conv2) + b_conv2
+h_conv2 = conv2d(binAct2, BW_conv2) + b_conv2
 h_relu2 = tf.nn.relu(h_conv2)
 h_pool2 = max_pool_2x2(h_conv2)
 
 # fully connected layer
 W_fc1 = weight_variable([7, 7, 64, 1024])
 b_fc1 = bias_variable([1024])
+BW_fc1 = binarize_weights(W_fc1)
 
 norm3 = batch_norm_layer(h_pool2)
 binAct3 = binary_activation(norm3)
 
-h_fc1 = tf.nn.relu(conv2d(binAct3, W_fc1, padding='VALID') + b_fc1)
+h_fc1 = tf.nn.relu(conv2d(binAct3, BW_fc1, padding='VALID') + b_fc1)
 h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
 # readout layer
 W_fc2 = weight_variable([1, 1, 1024, 10])
 b_fc2 = bias_variable([10])
+BW_fc2 = binarize_weights(W_fc2)
 
-y_conv = tf.reshape(conv2d(h_fc1_drop, W_fc2) + b_fc2, [-1, 10])
+norm4 = batch_norm_layer(h_fc1_drop)
+binAct4 = binary_activation(norm3)
+
+y_conv = tf.reshape(conv2d(binAct4, BW_fc2) + b_fc2, [-1, 10])
 
 # create train ops
 cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y_conv))
