@@ -50,7 +50,7 @@ h_pool2 = max_pool_2x2(h_conv2)
 # fully connected layer
 W_fc1 = weight_variable([7, 7, 64, 1024])
 b_fc1 = bias_variable([1024])
-BW_fc1 = binarize_weights(BW_fc1)
+BW_fc1 = binarize_weights(W_fc1)
 
 h_fc1 = tf.nn.relu(conv2d(h_pool2, BW_fc1, padding='VALID') + b_fc1)
 h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
