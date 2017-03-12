@@ -42,23 +42,26 @@ h_pool1 = max_pool_2x2(h_conv1)
 # Second convolutional layer
 W_conv2 = weight_variable([5, 5, 32, 64])
 b_conv2 = bias_variable([64])
-BW_conv1 = binarize_weights(W_conv1)
+BW_conv2 = binarize_weights(W_conv2)
 
-h_conv2 = tf.nn.relu(conv2d(h_pool1, W_conv2) + b_conv2)
+h_conv2 = tf.nn.relu(conv2d(h_pool1, BW_conv2) + b_conv2)
 h_pool2 = max_pool_2x2(h_conv2)
 
 # fully connected layer
 W_fc1 = weight_variable([7, 7, 64, 1024])
 b_fc1 = bias_variable([1024])
+BW_fc1 = binarize_weights(BW_fc1)
 
-h_fc1 = tf.nn.relu(conv2d(h_pool2, W_fc1, padding='VALID') + b_fc1)
+h_fc1 = tf.nn.relu(conv2d(h_pool2, BW_fc1, padding='VALID') + b_fc1)
 h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
 # readout layer
 W_fc2 = weight_variable([1, 1, 1024, 10])
 b_fc2 = bias_variable([10])
+BW_fc2 = binarize_weights(W_fc2)
 
-y_conv = tf.reshape(conv2d(h_fc1_drop, W_fc2) + b_fc2, [-1, 10])
+
+y_conv = tf.reshape(conv2d(h_fc1_drop, BW_fc2) + b_fc2, [-1, 10])
 
 # create train ops
 cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y_conv))
