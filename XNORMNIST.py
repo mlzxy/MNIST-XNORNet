@@ -20,7 +20,7 @@ def max_pool_2x2(x):
   return tf.nn.max_pool(x, ksize=[1, 2, 2, 1],
                         strides=[1, 2, 2, 1], padding='SAME')
 
-def batch_norm_layer(x, name):
+def batch_norm_layer(x, name='norm'):
     with tf.name_scope(name) as scope:
         mean, variance = tf.nn.moments(x, axes=[1, 2], keep_dims=True)
         norm = tf.nn.batch_normalization(x, mean, variance, None, None, 1e-5)
@@ -45,7 +45,7 @@ BW_conv1 = binarize_weights(W_conv1)
 norm1 = batch_norm_layer(x_image)
 binAct1 = binary_activation(norm1)
 
-h_conv1 = tf.nn.relu(conv2d(binAct1, BW_conv1) + b_conv1)
+h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)
 h_pool1 = max_pool_2x2(h_conv1)
 
 # Second convolutional layer
@@ -79,7 +79,7 @@ BW_fc2 = binarize_weights(W_fc2)
 norm4 = batch_norm_layer(h_fc1_drop)
 binAct4 = binary_activation(norm3)
 
-y_conv = tf.reshape(conv2d(binAct4, BW_fc2) + b_fc2, [-1, 10])
+y_conv = tf.reshape(conv2d(h_fc1_drop, W_fc2) + b_fc2, [-1, 10])
 
 # create train ops
 cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y_conv))
