@@ -1,7 +1,5 @@
 import tensorflow as tf
 import numpy as np
-import matplotlib.pyplot as plt
-get_ipython().magic(u'matplotlib inline')
 
 from binaryop import binarize_weights
 from tensorflow.examples.tutorials.mnist import input_data
